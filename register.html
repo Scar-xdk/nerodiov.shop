@@ -1,0 +1,73 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Registrar</title>
+<link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+<div class="container">
+  <div class="grid">
+    <div class="brand">
+      <h1>NERODIOV CHAT</h1>
+      <p>Crie sua conta</p>
+    </div>
+    <div class="form">
+      <h2>Registrar</h2>
+      <input id="name" class="input" placeholder="Nome de usuário"/>
+      <input id="email" class="input" placeholder="Email"/>
+      <input id="password" class="input" placeholder="Senha" type="password"/>
+      <input id="avatarFile" type="file" accept="image/*" class="input"/>
+      <button id="registerBtn" class="btn">Registrar</button>
+      <div class="small center" style="gap:8px">
+        <div>Já tem conta?</div>
+        <a class="link" href="login.html">Entrar</a>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js"
+import {getAuth,createUserWithEmailAndPassword,updateProfile} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js"
+import {getFirestore,doc,setDoc,serverTimestamp} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js"
+import {getStorage,ref,uploadBytes, getDownloadURL} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-storage.js"
+
+const firebaseConfig = {
+  apiKey:"",
+  authDomain:"",
+  projectId:"",
+  storageBucket:"",
+  messagingSenderId:"",
+  appId:""
+}
+
+const app = initializeApp(firebaseConfig)
+const auth = getAuth(app)
+const db = getFirestore(app)
+const storage = getStorage(app)
+
+document.getElementById("registerBtn").addEventListener("click",async function(){
+  const name = document.getElementById("name").value.trim()
+  const email = document.getElementById("email").value.trim()
+  const password = document.getElementById("password").value
+  const avatar = document.getElementById("avatarFile").files[0]
+  if(!name||!email||!password) return alert("Preencha todos os campos")
+  try{
+    const userCred = await createUserWithEmailAndPassword(auth,email,password)
+    let photoURL = ""
+    if(avatar){
+      const storageRef = ref(storage,"avatars/"+userCred.user.uid+"/"+Date.now()+"_"+avatar.name)
+      await uploadBytes(storageRef,avatar)
+      photoURL = await getDownloadURL(storageRef)
+    }
+    await updateProfile(userCred.user,{displayName:name,photoURL:photoURL})
+    await setDoc(doc(db,"users",userCred.user.uid),{name:name,email:email,photoURL:photoURL,createdAt:serverTimestamp()})
+    location.href="chat.html"
+  }catch(e){
+    alert("Erro: "+e.message)
+  }
+})
+</script>
+</body>
+</html>

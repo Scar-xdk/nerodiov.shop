@@ -1,0 +1,220 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Chat</title>
+<link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+<div class="container">
+  <div style="display:flex;gap:12px">
+    <div style="flex:1">
+      <div class="header-bar">
+        <div style="display:flex;align-items:center;gap:12px">
+          <div style="font-weight:800">NERODIOV CHAT</div>
+          <div id="status" class="small-muted">conectando...</div>
+        </div>
+        <div class="top-actions">
+          <div id="userName" class="small-muted"></div>
+          <div id="logoutBtn" class="btn">Sair</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:12px">
+        <div style="flex:1;display:flex;flex-direction:column">
+          <div class="messages" id="messages"></div>
+          <div class="input-area">
+            <input id="messageInput" class="textbox" placeholder="Digite uma mensagem"/>
+            <input id="fileInput" type="file" style="display:none"/>
+            <button id="attachBtn" class="icon-btn">📎</button>
+            <button id="sendBtn" class="btn">Enviar</button>
+          </div>
+        </div>
+        <div class="side-panel">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:8px">
+            <div id="profilePic" class="profile-pic"></div>
+            <div id="profileName" class="small-muted"></div>
+          </div>
+          <div class="controls">
+            <label class="small-muted">Trocar nome</label>
+            <input id="newName" class="input" placeholder="Novo nome"/>
+            <button id="changeNameBtn" class="btn">Atualizar nome</button>
+            <label class="small-muted">Trocar senha</label>
+            <input id="newPass" class="input" placeholder="Nova senha" type="password"/>
+            <button id="changePassBtn" class="btn">Atualizar senha</button>
+            <label class="small-muted">Upload de imagem de perfil</label>
+            <input id="profileFile" type="file" accept="image/*" class="input"/>
+            <button id="uploadProfileBtn" class="btn">Enviar imagem</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js"
+import {getAuth,onAuthStateChanged,signOut,updatePassword,updateProfile,EmailAuthProvider,reauthenticateWithCredential} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js"
+import {getFirestore,collection,addDoc,query,orderBy,onSnapshot,serverTimestamp,where,getDocs} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js"
+import {getStorage,ref,uploadBytes,getDownloadURL} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-storage.js"
+
+const firebaseConfig = {
+  apiKey:"",
+  authDomain:"",
+  projectId:"",
+  storageBucket:"",
+  messagingSenderId:"",
+  appId:""
+}
+
+const app = initializeApp(firebaseConfig)
+const auth = getAuth(app)
+const db = getFirestore(app)
+const storage = getStorage(app)
+
+let currentUser = null
+const statusEl = document.getElementById("status")
+const messagesEl = document.getElementById("messages")
+const userNameEl = document.getElementById("userName")
+const profilePicEl = document.getElementById("profilePic")
+const profileNameEl = document.getElementById("profileName")
+
+onAuthStateChanged(auth,async user=>{
+  if(!user) return location.href="login.html"
+  currentUser = user
+  userNameEl.textContent = user.displayName || user.email
+  profileNameEl.textContent = user.displayName || user.email
+  if(user.photoURL){
+    profilePicEl.style.backgroundImage = "url('"+user.photoURL+"')"
+    profilePicEl.style.backgroundSize = "cover"
+    profilePicEl.textContent = ""
+  }else{
+    profilePicEl.style.background = "linear-gradient(90deg,var(--accent),#3a0075)"
+    profilePicEl.textContent = (user.displayName||"U").slice(0,2).toUpperCase()
+  }
+  statusEl.textContent = "online"
+  startListening()
+})
+
+document.getElementById("logoutBtn").addEventListener("click",async function(){
+  await signOut(auth)
+  location.href="login.html"
+})
+
+document.getElementById("attachBtn").addEventListener("click",function(){
+  document.getElementById("fileInput").click()
+})
+
+document.getElementById("fileInput").addEventListener("change",async function(event){
+  const file = event.target.files[0]
+  if(!file) return
+  const path = "uploads/"+currentUser.uid+"/"+Date.now()+"_"+file.name
+  const storageRef = ref(storage,path)
+  await uploadBytes(storageRef,file)
+  const url = await getDownloadURL(storageRef)
+  await sendMessage({type:file.type.startsWith("image")?"image":file.type.startsWith("video")?"video":"file",text:"",mediaUrl:url})
+  event.target.value = ""
+})
+
+document.getElementById("sendBtn").addEventListener("click",async function(){
+  const txt = document.getElementById("messageInput").value.trim()
+  if(!txt) return
+  await sendMessage({type:"text",text:txt,mediaUrl:""})
+  document.getElementById("messageInput").value = ""
+})
+
+async function sendMessage(payload){
+  if(!currentUser) return
+  await addDoc(collection(db,"messages"),{
+    uid:currentUser.uid,
+    name:currentUser.displayName||currentUser.email,
+    type:payload.type,
+    text:payload.text||"",
+    mediaUrl:payload.mediaUrl||"",
+    createdAt:serverTimestamp()
+  })
+}
+
+function formatTime(ts){
+  if(!ts) return ""
+  const d = ts.toDate()
+  return d.toLocaleString()
+}
+
+let unsubscribe = null
+function startListening(){
+  const q = query(collection(db,"messages"),orderBy("createdAt"))
+  if(unsubscribe) unsubscribe()
+  unsubscribe = onSnapshot(q,snap=>{
+    messagesEl.innerHTML = ""
+    snap.docs.forEach(doc=>{
+      const data = doc.data()
+      const msg = document.createElement("div")
+      msg.className = "message"
+      if(data.uid===currentUser.uid) msg.className = "message me"
+      const meta = document.createElement("div")
+      meta.className = "meta"
+      meta.textContent = (data.name||"Anon")+" • "+formatTime(data.createdAt)
+      msg.appendChild(meta)
+      if(data.type==="text"){
+        const t = document.createElement("div")
+        t.textContent = data.text
+        msg.appendChild(t)
+      }else if(data.type==="image"){
+        const img = document.createElement("img")
+        img.src = data.mediaUrl
+        img.className = "msg-media"
+        msg.appendChild(img)
+      }else if(data.type==="video"){
+        const v = document.createElement("video")
+        v.src = data.mediaUrl
+        v.controls = true
+        v.className = "msg-media"
+        msg.appendChild(v)
+      }else{
+        const a = document.createElement("a")
+        a.href = data.mediaUrl
+        a.textContent = "Arquivo enviado"
+        a.target = "_blank"
+        msg.appendChild(a)
+      }
+      messagesEl.appendChild(msg)
+      messagesEl.scrollTop = messagesEl.scrollHeight
+    })
+  })
+}
+
+document.getElementById("changeNameBtn").addEventListener("click",async function(){
+  const newName = document.getElementById("newName").value.trim()
+  if(!newName) return alert("Nome vazio")
+  await updateProfile(currentUser,{displayName:newName})
+  userNameEl.textContent = newName
+  profileNameEl.textContent = newName
+  alert("Nome atualizado")
+})
+
+document.getElementById("changePassBtn").addEventListener("click",async function(){
+  const newPass = document.getElementById("newPass").value
+  if(!newPass) return alert("Senha vazia")
+  try{
+    await updatePassword(currentUser,newPass)
+    alert("Senha atualizada")
+  }catch(e){
+    alert("Erro ao atualizar senha. Você pode precisar entrar novamente e tentar de novo")
+  }
+})
+
+document.getElementById("uploadProfileBtn").addEventListener("click",async function(){
+  const file = document.getElementById("profileFile").files[0]
+  if(!file) return alert("Selecione uma imagem")
+  const storageRef = ref(storage,"avatars/"+currentUser.uid+"/"+Date.now()+"_"+file.name)
+  await uploadBytes(storageRef,file)
+  const url = await getDownloadURL(storageRef)
+  await updateProfile(currentUser,{photoURL:url})
+  profilePicEl.style.backgroundImage = "url('"+url+"')"
+  profilePicEl.style.backgroundSize = "cover"
+  profilePicEl.textContent = ""
+  alert("Imagem atualizada")
+})
+</script>
+</body>
+</html>

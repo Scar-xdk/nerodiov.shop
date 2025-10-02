@@ -1,0 +1,65 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Login</title>
+<link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+<div class="container">
+  <div class="grid">
+    <div class="brand">
+      <h1>NERODIOV CHAT</h1>
+      <p>Login rápido para entrar no chat estilo deep web</p>
+      <div class="center" style="width:100%;gap:12px">
+        <div class="small-muted">Feito para testar rápido</div>
+      </div>
+    </div>
+    <div class="form">
+      <h2>Entrar</h2>
+      <input id="email" class="input" placeholder="Email"/>
+      <input id="password" class="input" placeholder="Senha" type="password"/>
+      <button id="loginBtn" class="btn">Entrar</button>
+      <div class="small center" style="gap:8px">
+        <div>Não tem conta?</div>
+        <a class="link" href="register.html">Registre-se</a>
+      </div>
+      <div class="footer-note">Seu domínio precisa ter HTTPS para o upload de mídia funcionar corretamente</div>
+    </div>
+  </div>
+</div>
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js"
+import {getAuth,signInWithEmailAndPassword,onAuthStateChanged} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js"
+
+const firebaseConfig = {
+  apiKey:"",
+  authDomain:"",
+  projectId:"",
+  storageBucket:"",
+  messagingSenderId:"",
+  appId:""
+}
+
+const app = initializeApp(firebaseConfig)
+const auth = getAuth(app)
+
+document.getElementById("loginBtn").addEventListener("click",async function(){
+  const email = document.getElementById("email").value.trim()
+  const password = document.getElementById("password").value
+  if(!email||!password) return alert("Preencha email e senha")
+  try{
+    await signInWithEmailAndPassword(auth,email,password)
+    location.href="chat.html"
+  }catch(e){
+    alert("Erro ao entrar: "+e.message)
+  }
+})
+
+onAuthStateChanged(auth,user=>{
+  if(user) location.href="chat.html"
+})
+</script>
+</body>
+</html>
