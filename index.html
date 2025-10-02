@@ -5,88 +5,27 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Site Interativo</title>
 <style>
-body {
-  font-family: Arial, sans-serif;
-  background: #222;
-  color: #fff;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  padding:20px;
-}
-
-h1 {
-  color: #ffcc00;
-  margin-bottom: 20px;
-}
+body { font-family: Arial; background: #222; color: #fff; display:flex; flex-direction:column; align-items:center; padding:20px; }
+h1 { color: #ffcc00; margin-bottom: 20px; }
 
 /* Calculadora */
-.calculator {
-  background:#444;
-  padding:20px;
-  border-radius:10px;
-  margin-bottom:20px;
-  box-shadow: 0 0 10px #000;
-}
-
-input[type="text"] {
-  width: 220px;
-  padding:10px;
-  font-size:18px;
-  margin-bottom:10px;
-  border-radius:6px;
-  border:none;
-  text-align:right;
-}
-
-button {
-  padding:10px 15px;
-  margin:4px;
-  border:none;
-  border-radius:6px;
-  cursor:pointer;
-  font-weight:bold;
-  color:#fff;
-}
-
+.calculator { background:#444; padding:20px; border-radius:10px; margin-bottom:20px; box-shadow: 0 0 10px #000; }
+input[type="text"] { width: 220px; padding:10px; font-size:18px; margin-bottom:10px; border-radius:6px; border:none; text-align:right; }
+button { padding:10px 15px; margin:4px; border:none; border-radius:6px; cursor:pointer; font-weight:bold; color:#fff; }
 button:hover { opacity:0.8; }
-
 .calc-btn { background:#007bff; }
 .calc-op { background:#ff6600; }
 
 /* Símbolos */
-.symbols {
-  background:#333;
-  padding:15px;
-  border-radius:8px;
-  margin-bottom:20px;
-}
-
-.symbol {
-  display:inline-block;
-  margin:5px;
-  padding:10px;
-  background:#555;
-  border-radius:6px;
-  cursor:pointer;
-  transition:0.2s;
-}
-
+.symbols { background:#333; padding:15px; border-radius:8px; margin-bottom:20px; }
+.symbol { display:inline-block; margin:5px; padding:10px; background:#555; border-radius:6px; cursor:pointer; transition:0.2s; }
 .symbol:hover { background:#777; }
-
-.copiado {
-  margin-top:5px;
-  color: #00ff00;
-  font-size:14px;
-  visibility:hidden;
-}
+.copiado { margin-top:5px; color: #00ff00; font-size:14px; visibility:hidden; }
 
 /* Snake */
-#snakeCanvas {
-  background:#000;
-  margin-top:20px;
-  border:3px solid #ffcc00;
-}
+#snakeCanvas { background:#000; margin-top:20px; border:3px solid #ffcc00; }
+#startBtn { margin-top:10px; padding:10px 20px; background:#00aa00; color:#fff; border:none; border-radius:6px; cursor:pointer; }
+#startBtn:hover { opacity:0.8; }
 </style>
 </head>
 <body>
@@ -139,6 +78,7 @@ button:hover { opacity:0.8; }
 
 <!-- Snake -->
 <canvas id="snakeCanvas" width="400" height="400"></canvas>
+<button id="startBtn">Start</button>
 
 <script>
 // Calculadora
@@ -162,18 +102,35 @@ function copySymbol(symbol) {
 const canvas = document.getElementById('snakeCanvas');
 const ctx = canvas.getContext('2d');
 const grid = 20;
-let snake = [{x:200, y:200}];
-let dx = grid, dy = 0;
-let apple = {x:0,y:0};
-let score = 0;
+
+let snake, dx, dy, apple, score;
+let gameInterval = null;
+let gameRunning = false;
+
+function initGame() {
+  snake = [{x:200, y:200}];
+  dx = grid; dy = 0;
+  score = 0;
+  apple = {};
+  randomPosition();
+  draw(); // draw initial state
+}
 
 function randomPosition() {
   apple.x = Math.floor(Math.random() * (canvas.width/grid)) * grid;
   apple.y = Math.floor(Math.random() * (canvas.height/grid)) * grid;
 }
-randomPosition();
+
+function startGame() {
+  if(gameInterval) clearInterval(gameInterval);
+  gameRunning = true;
+  initGame();
+  gameInterval = setInterval(gameLoop, 100);
+}
 
 function gameLoop() {
+  if(!gameRunning) return;
+
   ctx.fillStyle = "#000";
   ctx.fillRect(0,0,canvas.width,canvas.height);
 
@@ -184,10 +141,9 @@ function gameLoop() {
   if(head.x < 0 || head.y < 0 || head.x>=canvas.width || head.y>=canvas.height ||
      snake.some(seg => seg.x===head.x && seg.y===head.y)) {
     alert("Game Over! Score: "+score);
-    snake=[{x:200,y:200}];
-    dx=grid; dy=0;
-    score=0;
-    randomPosition();
+    gameRunning = false;
+    clearInterval(gameInterval);
+    return;
   }
 
   snake.unshift(head);
@@ -208,6 +164,7 @@ function gameLoop() {
 }
 
 document.addEventListener("keydown", e=>{
+  if(!gameRunning) return;
   switch(e.key){
     case "ArrowUp": if(dy===0){dx=0;dy=-grid;} break;
     case "ArrowDown": if(dy===0){dx=0;dy=grid;} break;
@@ -216,7 +173,9 @@ document.addEventListener("keydown", e=>{
   }
 });
 
-setInterval(gameLoop,100);
+document.getElementById('startBtn').addEventListener('click', startGame);
+
+initGame();
 </script>
 
 </body>
