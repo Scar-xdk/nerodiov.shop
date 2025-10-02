@@ -1,96 +1,41 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Consulta CNPJ</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f4f4f4;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
-    .container {
-      background: #fff;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-      width: 300px;
-      text-align: center;
-    }
-    input {
-      width: 100%;
-      padding: 10px;
-      margin-bottom: 10px;
-      border-radius: 4px;
-      border: 1px solid #ccc;
-    }
-    button {
-      padding: 10px 20px;
-      border: none;
-      background: #007bff;
-      color: #fff;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-    button:hover {
-      background: #0056b3;
-    }
-    .result {
-      margin-top: 15px;
-      text-align: left;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulação API</title>
+<style>
+body { font-family: Arial; background: #f4f4f4; display:flex; justify-content:center; align-items:center; height:100vh;}
+.container { background:#fff; padding:20px; border-radius:8px; box-shadow:0 2px 10px rgba(0,0,0,0.1);}
+pre { background:#eee; padding:10px; border-radius:4px; overflow-x:auto;}
+button { padding:8px 15px; margin-top:10px; cursor:pointer; border:none; border-radius:4px; background:#007bff; color:#fff;}
+button:hover { background:#0056b3;}
+</style>
 </head>
 <body>
-  <div class="container">
-    <h2>Consulta CNPJ</h2>
-    <input type="text" id="cnpj" placeholder="Digite o CNPJ (somente números)">
-    <button onclick="consultarCNPJ()">Consultar</button>
-    <div class="result" id="result"></div>
-  </div>
+<div class="container">
+<h2>Simular /api/pkg/</h2>
+<button onclick="getPackage()">Gerar JSON</button>
+<pre id="output"></pre>
+</div>
 
-  <script>
-    async function consultarCNPJ() {
-      const cnpj = document.getElementById('cnpj').value.replace(/\D/g, '');
-      if (!cnpj) {
-        alert('Digite um CNPJ válido');
-        return;
-      }
-
-      const resultDiv = document.getElementById('result');
-      resultDiv.innerHTML = 'Carregando...';
-
-      try {
-        const response = await fetch(`https://www.receitaws.com.br/v1/cnpj/${cnpj}`);
-        const data = await response.json();
-
-        if (data.status === 'ERROR') {
-          resultDiv.innerHTML = `Erro: ${data.message}`;
-          return;
-        }
-
-        resultDiv.innerHTML = `
-          <strong>Nome:</strong> ${data.nome} <br>
-          <strong>Fantasia:</strong> ${data.fantasia} <br>
-          <strong>Status:</strong> ${data.situacao} <br>
-          <strong>Abertura:</strong> ${data.abertura} <br>
-          <strong>Atividade Principal:</strong> ${data.atividade_principal[0].text} <br>
-          <strong>UF:</strong> ${data.uf} <br>
-          <strong>Telefone:</strong> ${data.telefone} <br>
-          <strong>Email:</strong> ${data.email || 'Não informado'} <br>
-          <strong>Logradouro:</strong> ${data.logradouro}, ${data.numero} - ${data.bairro} <br>
-          <strong>CEP:</strong> ${data.cep} <br>
-          <strong>Município:</strong> ${data.municipio} <br>
-        `;
-      } catch (err) {
-        resultDiv.innerHTML = 'Erro ao consultar CNPJ.';
-        console.error(err);
-      }
+<script>
+function getPackage() {
+  // Simula a resposta da API
+  const pkg = {
+    name: "nerodiov-shop",
+    version: "1.0.0",
+    description: "Teste de API simulada",
+    main: "index.js",
+    dependencies: {
+      "express": "^4.18.2",
+      "axios": "^1.4.0"
     }
-  </script>
+  };
+
+  // Mostra bonitinho
+  document.getElementById('output').textContent = JSON.stringify(pkg, null, 2);
+}
+</script>
 </body>
 </html>
