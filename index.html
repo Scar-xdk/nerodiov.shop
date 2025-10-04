@@ -9,15 +9,26 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
   <style>
     * { margin:0; padding:0; box-sizing:border-box; font-family:'Inter', sans-serif; }
-    body { background:#000; color:#fff; line-height:1.6; overflow-x:hidden; }
+    body { background:#0d0d0d; color:#fff; line-height:1.6; overflow-x:hidden; }
 
+    /* Header com fundo degradê e textura */
     header {
       text-align:center;
-      padding:100px 20px 50px;
+      padding:120px 20px 50px;
+      background: linear-gradient(135deg, #2a0d3e, #3f2c48, #000);
+      position: relative;
+      overflow:hidden;
     }
-    header h1 { font-size:3rem; margin-bottom:20px; color:#ffcc00; }
-    header p { font-size:1.2rem; margin-bottom:30px; max-width:600px; margin-left:auto;margin-right:auto; color:#ddd; }
-    .btn { display:inline-block; padding:14px 30px; font-size:1rem; border-radius:6px; background:#ffcc00; color:#000; font-weight:600; transition:0.3s; }
+    header::before {
+      content:"";
+      position:absolute;
+      top:0; left:0; width:100%; height:100%;
+      background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.03), transparent 70%);
+      z-index:0;
+    }
+    header h1 { font-size:3rem; margin-bottom:20px; color:#ffcc00; position:relative; z-index:1;}
+    header p { font-size:1.2rem; margin-bottom:30px; max-width:600px; margin-left:auto;margin-right:auto; color:#ddd; position:relative; z-index:1; }
+    .btn { display:inline-block; padding:14px 30px; font-size:1rem; border-radius:6px; background:#ffcc00; color:#000; font-weight:600; transition:0.3s; position:relative; z-index:1; }
     .btn:hover { background:#e6b800; }
 
     /* Servidores flutuantes */
@@ -25,21 +36,22 @@
       display:flex;
       flex-direction:column;
       align-items:center;
-      gap:50px;
+      gap:30px;
       margin:80px 0;
       position:relative;
+      z-index:1;
     }
     .server-icon {
-      font-size:6rem;
-      color:rgba(255,255,255,0.2);
+      font-size:7rem;
+      color:rgba(255,255,255,0.15);
       animation: floatUpDown 4s ease-in-out infinite alternate;
     }
-    .server-icon:nth-child(2){ animation-delay:1s; }
-    .server-icon:nth-child(3){ animation-delay:2s; }
+    .server-icon:nth-child(2){ animation-delay:0.5s; }
+    .server-icon:nth-child(3){ animation-delay:1s; }
 
     @keyframes floatUpDown {
       0% { transform: translateY(0); }
-      100% { transform: translateY(-30px); }
+      100% { transform: translateY(-40px); }
     }
 
     /* Sections */
@@ -66,8 +78,6 @@
     .card .btn:hover{ background:#4a0072; }
     .card i { font-size:3rem; margin-bottom:15px; color:#ffcc00; }
 
-    footer{ text-align:center; padding:30px 20px; background:#111; color:#bbb; }
-
     /* WhatsApp Form */
     .whatsapp-form { margin-top:40px; text-align:center; }
     .whatsapp-form input, .whatsapp-form textarea {
@@ -78,6 +88,8 @@
       transition:0.3s;
     }
     .whatsapp-form button:hover { background:#1ebe5d; }
+
+    footer{ text-align:center; padding:30px 20px; background:#111; color:#bbb; }
 
     @media(max-width:768px){ .cards{ flex-direction:column; align-items:center; } }
   </style>
@@ -141,10 +153,10 @@
   <script>
     function enviarWhatsApp(){
       const nome = document.getElementById('nome').value.trim();
-      const message = document.getElementById('message').value.trim();
+      const msg = document.getElementById('msg').value.trim();
       if(!nome || !msg){ alert("Preencha nome e mensagem!"); return; }
       const numero = "553496476084";
-      const texto = `*nome:* ${nome}\n*message:* ${msg}`;
+      const texto = `*nome:* ${nome}\n*msg:* ${msg}`;
       const url = `https://api.whatsapp.com/send?phone=${numero}&text=${encodeURIComponent(texto)}`;
       window.open(url, "_blank");
     }
