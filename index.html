@@ -11,33 +11,41 @@
     * { margin:0; padding:0; box-sizing:border-box; font-family:'Inter', sans-serif; }
     body { background:#000; color:#fff; line-height:1.6; overflow-x:hidden; }
 
-    /* Hero */
     header {
-      position: relative;
-      background: linear-gradient(135deg, #2a0d3e, #6a1b9a);
-      color:#fff;
       text-align:center;
-      padding:120px 20px 150px;
-      overflow:hidden;
+      padding:100px 20px 50px;
     }
-    header h1 { font-size:3rem; margin-bottom:20px; z-index:1; position:relative; }
-    header p { font-size:1.2rem; margin-bottom:30px; z-index:1; position:relative; max-width:600px; margin-left:auto;margin-right:auto; }
-    .btn { display:inline-block; padding:14px 30px; font-size:1rem; border-radius:6px; background:#ffcc00; color:#000; font-weight:600; transition:0.3s; z-index:1; position:relative; }
+    header h1 { font-size:3rem; margin-bottom:20px; color:#ffcc00; }
+    header p { font-size:1.2rem; margin-bottom:30px; max-width:600px; margin-left:auto;margin-right:auto; color:#ddd; }
+    .btn { display:inline-block; padding:14px 30px; font-size:1rem; border-radius:6px; background:#ffcc00; color:#000; font-weight:600; transition:0.3s; }
     .btn:hover { background:#e6b800; }
 
-    /* Parallax Servers */
+    /* Servidores flutuantes */
+    .server-container {
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:50px;
+      margin:80px 0;
+      position:relative;
+    }
     .server-icon {
-      position:absolute;
-      font-size:5rem;
-      color:rgba(255,255,255,0.15);
-      transition: transform 0.1s linear;
+      font-size:6rem;
+      color:rgba(255,255,255,0.2);
+      animation: floatUpDown 4s ease-in-out infinite alternate;
+    }
+    .server-icon:nth-child(2){ animation-delay:1s; }
+    .server-icon:nth-child(3){ animation-delay:2s; }
+
+    @keyframes floatUpDown {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-30px); }
     }
 
     /* Sections */
     section{ padding:60px 20px; max-width:1200px; margin:0 auto; }
     h2{ font-size:2rem; margin-bottom:30px; text-align:center; color:#fff; }
 
-    /* Cards */
     .cards{ display:flex; flex-wrap:wrap; gap:20px; justify-content:center; }
     .card{
       background:#1a0d2a;
@@ -56,11 +64,8 @@
     .card p{ margin-bottom:20px; color:#ddd; }
     .card .btn{ background:#6a1b9a; color:#fff; }
     .card .btn:hover{ background:#4a0072; }
-
-    /* Card Icons */
     .card i { font-size:3rem; margin-bottom:15px; color:#ffcc00; }
 
-    /* Footer */
     footer{ text-align:center; padding:30px 20px; background:#111; color:#bbb; }
 
     /* WhatsApp Form */
@@ -74,23 +79,24 @@
     }
     .whatsapp-form button:hover { background:#1ebe5d; }
 
-    /* Responsivo */
     @media(max-width:768px){ .cards{ flex-direction:column; align-items:center; } }
   </style>
 </head>
 <body>
 
-  <!-- Hero -->
+  <!-- Header -->
   <header>
     <h1>Diov Host</h1>
     <p>Hospedagem de bots e aplicações: Python, Node.js, PHP. Servidores rápidos e confiáveis para seu código rodar 24/7.</p>
     <a href="https://hpanel.nerodiov.shop" class="btn">Começar Agora</a>
-
-    <!-- Parallax Servers -->
-    <i class="fas fa-server server-icon" style="top:20%; left:20%;" data-speed="0.3"></i>
-    <i class="fas fa-server server-icon" style="top:30%; left:50%;" data-speed="0.5"></i>
-    <i class="fas fa-server server-icon" style="top:25%; right:20%;" data-speed="0.7"></i>
   </header>
+
+  <!-- Servidores flutuantes -->
+  <div class="server-container">
+    <i class="fas fa-server server-icon"></i>
+    <i class="fas fa-server server-icon"></i>
+    <i class="fas fa-server server-icon"></i>
+  </div>
 
   <!-- Planos -->
   <section>
@@ -118,28 +124,6 @@
         <a href="#" class="btn">Escolher</a>
       </div>
     </div>
-  </section>
-
-  <!-- Recursos -->
-  <section>
-    <h2>Recursos</h2>
-    <div class="cards">
-      <div class="card">
-        <i class="fas fa-shield-alt"></i>
-        <h3>Segurança</h3>
-        <p>Backups automáticos, SSL grátis e proteção completa.</p>
-      </div>
-      <div class="card">
-        <i class="fas fa-tachometer-alt"></i>
-        <h3>Velocidade</h3>
-        <p>Servidores otimizados para bots Python, Node.js e PHP.</p>
-      </div>
-      <div class="card">
-        <i class="fas fa-headset"></i>
-        <h3>Suporte 24/7</h3>
-        <p>Suporte técnico rápido para qualquer dúvida ou problema.</p>
-      </div>
-    </div>
 
     <!-- WhatsApp Support Form -->
     <div class="whatsapp-form">
@@ -150,29 +134,17 @@
     </div>
   </section>
 
-  <!-- Footer -->
   <footer>
     © 2025 Diov Host - Todos os direitos reservados.
   </footer>
 
   <script>
-    // Parallax premium
-    const servers = document.querySelectorAll('.server-icon');
-    window.addEventListener('scroll', () => {
-      const scrollY = window.scrollY;
-      servers.forEach(el => {
-        const speed = parseFloat(el.dataset.speed);
-        el.style.transform = `translateY(${scrollY * speed}px)`;
-      });
-    });
-
-    // WhatsApp envio
     function enviarWhatsApp(){
       const nome = document.getElementById('nome').value.trim();
-      const msg = document.getElementById('msg').value.trim();
+      const message = document.getElementById('message').value.trim();
       if(!nome || !msg){ alert("Preencha nome e mensagem!"); return; }
       const numero = "553496476084";
-      const texto = `*nome:* ${nome}\n*msg:* ${msg}`;
+      const texto = `*nome:* ${nome}\n*message:* ${msg}`;
       const url = `https://api.whatsapp.com/send?phone=${numero}&text=${encodeURIComponent(texto)}`;
       window.open(url, "_blank");
     }
