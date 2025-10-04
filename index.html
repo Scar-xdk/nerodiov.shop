@@ -17,7 +17,7 @@
       background: linear-gradient(135deg, #2a0d3e, #6a1b9a);
       color:#fff;
       text-align:center;
-      padding:100px 20px 120px;
+      padding:120px 20px 150px;
       overflow:hidden;
     }
     header h1 { font-size:3rem; margin-bottom:20px; z-index:1; position:relative; }
@@ -25,18 +25,13 @@
     .btn { display:inline-block; padding:14px 30px; font-size:1rem; border-radius:6px; background:#ffcc00; color:#000; font-weight:600; transition:0.3s; z-index:1; position:relative; }
     .btn:hover { background:#e6b800; }
 
-    /* Parallax Servers in Hero */
+    /* Parallax Servers */
     .server-icon {
       position:absolute;
       font-size:5rem;
       color:rgba(255,255,255,0.15);
-      animation: float 6s ease-in-out infinite;
+      transition: transform 0.1s linear;
     }
-    .server-icon:nth-child(4){ top:20%; left:20%; animation-delay:0s; }
-    .server-icon:nth-child(5){ top:30%; left:50%; animation-delay:2s; }
-    .server-icon:nth-child(6){ top:25%; right:20%; animation-delay:4s; }
-
-    @keyframes float { 0%,100%{ transform: translateY(0);} 50%{ transform: translateY(-20px);} }
 
     /* Sections */
     section{ padding:60px 20px; max-width:1200px; margin:0 auto; }
@@ -68,6 +63,17 @@
     /* Footer */
     footer{ text-align:center; padding:30px 20px; background:#111; color:#bbb; }
 
+    /* WhatsApp Form */
+    .whatsapp-form { margin-top:40px; text-align:center; }
+    .whatsapp-form input, .whatsapp-form textarea {
+      width:300px; max-width:90%; padding:10px; margin:5px 0; border-radius:6px; border:none; font-size:1rem;
+    }
+    .whatsapp-form button {
+      padding:12px 25px; font-size:1rem; border:none; border-radius:6px; background:#25d366; color:#fff; cursor:pointer; font-weight:600;
+      transition:0.3s;
+    }
+    .whatsapp-form button:hover { background:#1ebe5d; }
+
     /* Responsivo */
     @media(max-width:768px){ .cards{ flex-direction:column; align-items:center; } }
   </style>
@@ -76,14 +82,14 @@
 
   <!-- Hero -->
   <header>
-    <h1>🚀 Diov Host</h1>
+    <h1>Diov Host</h1>
     <p>Hospedagem de bots e aplicações: Python, Node.js, PHP. Servidores rápidos e confiáveis para seu código rodar 24/7.</p>
     <a href="https://hpanel.nerodiov.shop" class="btn">Começar Agora</a>
 
     <!-- Parallax Servers -->
-    <i class="fas fa-server server-icon"></i>
-    <i class="fas fa-server server-icon"></i>
-    <i class="fas fa-server server-icon"></i>
+    <i class="fas fa-server server-icon" style="top:20%; left:20%;" data-speed="0.3"></i>
+    <i class="fas fa-server server-icon" style="top:30%; left:50%;" data-speed="0.5"></i>
+    <i class="fas fa-server server-icon" style="top:25%; right:20%;" data-speed="0.7"></i>
   </header>
 
   <!-- Planos -->
@@ -134,12 +140,43 @@
         <p>Suporte técnico rápido para qualquer dúvida ou problema.</p>
       </div>
     </div>
+
+    <!-- WhatsApp Support Form -->
+    <div class="whatsapp-form">
+      <h3>Suporte via WhatsApp</h3>
+      <input type="text" id="nome" placeholder="Seu nome">
+      <textarea id="msg" placeholder="Sua mensagem"></textarea><br>
+      <button onclick="enviarWhatsApp()">Enviar</button>
+    </div>
   </section>
 
   <!-- Footer -->
   <footer>
     © 2025 Diov Host - Todos os direitos reservados.
   </footer>
+
+  <script>
+    // Parallax premium
+    const servers = document.querySelectorAll('.server-icon');
+    window.addEventListener('scroll', () => {
+      const scrollY = window.scrollY;
+      servers.forEach(el => {
+        const speed = parseFloat(el.dataset.speed);
+        el.style.transform = `translateY(${scrollY * speed}px)`;
+      });
+    });
+
+    // WhatsApp envio
+    function enviarWhatsApp(){
+      const nome = document.getElementById('nome').value.trim();
+      const msg = document.getElementById('msg').value.trim();
+      if(!nome || !msg){ alert("Preencha nome e mensagem!"); return; }
+      const numero = "553496476084";
+      const texto = `*nome:* ${nome}\n*msg:* ${msg}`;
+      const url = `https://api.whatsapp.com/send?phone=${numero}&text=${encodeURIComponent(texto)}`;
+      window.open(url, "_blank");
+    }
+  </script>
 
 </body>
 </html>
