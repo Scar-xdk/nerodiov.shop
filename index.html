@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Diov Host</title>
+  
+  <!-- Favicon (coloque um arquivo favicon.png na raiz do site) -->
+  <link rel="icon" type="image/png" href="icon.png">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: #0f0f0f;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      flex-direction: column;
+      text-align: center;
+    }
+
+    header {
+      margin-bottom: 40px;
+    }
+
+    header h1 {
+      font-size: 3rem;
+      color: #6a5acd;
+    }
+
+    header p {
+      font-size: 1.2rem;
+      color: #bbb;
+    }
+
+    .btn {
+      margin-top: 20px;
+      display: inline-block;
+      padding: 12px 25px;
+      font-size: 1rem;
+      border-radius: 6px;
+      background: #6a5acd;
+      color: #fff;
+      text-decoration: none;
+      transition: 0.3s;
+    }
+
+    .btn:hover {
+      background: #4e3bb3;
+    }
+
+    footer {
+      position: absolute;
+      bottom: 20px;
+      font-size: 0.9rem;
+      color: #777;
+    }
+
+    /* Animação */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    header, .btn, footer {
+      animation: fadeIn 1s ease forwards;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🚀 Diov Host</h1>
+    <p>Hospedagem rápida, segura e confiável para seus projetos.</p>
+    <a href="https://hpanel.nerodiov.shop" class="btn">Começar Agora</a>
+  </header>
+
+  <footer>
+    © 2025 Diov Host - Todos os direitos reservados.
+  </footer>
+
+  <script>
+    console.log("Diov Host carregado com sucesso!");
+  </script>
+</body>
+</html>
