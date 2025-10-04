@@ -4,90 +4,144 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Diov Host</title>
-  
-  <!-- Favicon (coloque um arquivo favicon.png na raiz do site) -->
   <link rel="icon" type="image/png" href="icon.png">
-
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: Arial, sans-serif;
-    }
+    * { margin:0; padding:0; box-sizing:border-box; font-family:'Inter', sans-serif; }
+    body { background:#f5f5f5; color:#333; line-height:1.6; overflow-x:hidden; }
 
-    body {
-      background: #0f0f0f;
-      color: #fff;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      flex-direction: column;
-      text-align: center;
-    }
-
+    /* Hero */
     header {
-      margin-bottom: 40px;
+      position: relative;
+      background: linear-gradient(135deg, #6a5acd, #4e3bb3);
+      color:#fff;
+      text-align:center;
+      padding:100px 20px 80px;
+      overflow:hidden;
+    }
+    header h1 { font-size:3rem; margin-bottom:20px; z-index:1; position:relative; }
+    header p { font-size:1.2rem; margin-bottom:30px; z-index:1; position:relative; }
+    .btn { display:inline-block; padding:14px 30px; font-size:1rem; border-radius:6px; background:#ffcc00; color:#333; font-weight:600; transition:0.3s; z-index:1; position:relative; }
+    .btn:hover { background:#e6b800; }
+
+    /* Parallax icons in hero */
+    .hero-icon {
+      position:absolute;
+      font-size:3rem;
+      color:rgba(255,255,255,0.2);
+      animation: float 6s ease-in-out infinite;
+    }
+    .hero-icon:nth-child(1){ top:10%; left:5%; animation-delay:0s;}
+    .hero-icon:nth-child(2){ top:20%; right:10%; animation-delay:2s;}
+    .hero-icon:nth-child(3){ bottom:15%; left:15%; animation-delay:4s;}
+    @keyframes float {
+      0%,100%{ transform: translateY(0);}
+      50%{ transform: translateY(-20px);}
     }
 
-    header h1 {
-      font-size: 3rem;
-      color: #6a5acd;
-    }
+    /* Sections */
+    section{ padding:60px 20px; max-width:1200px; margin:0 auto; }
+    h2{ font-size:2rem; margin-bottom:30px; text-align:center; color:#333; }
 
-    header p {
-      font-size: 1.2rem;
-      color: #bbb;
+    /* Cards */
+    .cards{ display:flex; flex-wrap:wrap; gap:20px; justify-content:center; }
+    .card{
+      background:#fff;
+      border-radius:10px;
+      box-shadow:0 4px 15px rgba(0,0,0,0.1);
+      padding:30px;
+      flex:1 1 250px;
+      max-width:300px;
+      text-align:center;
+      transition: transform 0.3s, box-shadow 0.3s;
+      position:relative;
+      overflow:hidden;
     }
+    .card:hover{ transform: translateY(-5px); box-shadow:0 6px 20px rgba(0,0,0,0.15);}
+    .card h3{ margin-bottom:15px; font-size:1.5rem; color:#6a5acd; }
+    .card p{ margin-bottom:20px; color:#555; }
+    .card .btn{ background:#6a5acd; color:#fff; }
+    .card .btn:hover{ background:#4e3bb3; }
 
-    .btn {
-      margin-top: 20px;
-      display: inline-block;
-      padding: 12px 25px;
-      font-size: 1rem;
-      border-radius: 6px;
-      background: #6a5acd;
-      color: #fff;
-      text-decoration: none;
-      transition: 0.3s;
-    }
+    /* Card Icons */
+    .card i { font-size:3rem; margin-bottom:15px; color:#6a5acd; }
 
-    .btn:hover {
-      background: #4e3bb3;
-    }
+    /* Footer */
+    footer{ text-align:center; padding:30px 20px; background:#333; color:#bbb; }
 
-    footer {
-      position: absolute;
-      bottom: 20px;
-      font-size: 0.9rem;
-      color: #777;
-    }
-
-    /* Animação */
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    header, .btn, footer {
-      animation: fadeIn 1s ease forwards;
-    }
+    /* Responsivo */
+    @media(max-width:768px){ .cards{ flex-direction:column; align-items:center; } }
   </style>
 </head>
 <body>
+
+  <!-- Hero -->
   <header>
     <h1>🚀 Diov Host</h1>
     <p>Hospedagem rápida, segura e confiável para seus projetos.</p>
     <a href="https://hpanel.nerodiov.shop" class="btn">Começar Agora</a>
+
+    <!-- Parallax Icons -->
+    <i class="fas fa-server hero-icon"></i>
+    <i class="fas fa-cloud hero-icon"></i>
+    <i class="fas fa-shield-alt hero-icon"></i>
   </header>
 
+  <!-- Planos -->
+  <section>
+    <h2>Planos de Hospedagem</h2>
+    <div class="cards">
+      <div class="card">
+        <i class="fas fa-leaf"></i>
+        <h3>Básico</h3>
+        <p>Ideal para pequenos projetos ou blogs pessoais.</p>
+        <p><strong>R$9,90/mês</strong></p>
+        <a href="#" class="btn">Escolher</a>
+      </div>
+      <div class="card">
+        <i class="fas fa-rocket"></i>
+        <h3>Profissional</h3>
+        <p>Perfeito para sites comerciais e portfólios.</p>
+        <p><strong>R$29,90/mês</strong></p>
+        <a href="#" class="btn">Escolher</a>
+      </div>
+      <div class="card">
+        <i class="fas fa-gem"></i>
+        <h3>Premium</h3>
+        <p>Para grandes projetos, com performance máxima.</p>
+        <p><strong>R$59,90/mês</strong></p>
+        <a href="#" class="btn">Escolher</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Recursos -->
+  <section>
+    <h2>Recursos</h2>
+    <div class="cards">
+      <div class="card">
+        <i class="fas fa-shield-alt"></i>
+        <h3>Segurança</h3>
+        <p>Proteção completa com backups e SSL grátis.</p>
+      </div>
+      <div class="card">
+        <i class="fas fa-tachometer-alt"></i>
+        <h3>Velocidade</h3>
+        <p>Servidores rápidos e otimizados para o seu site.</p>
+      </div>
+      <div class="card">
+        <i class="fas fa-headset"></i>
+        <h3>Suporte 24/7</h3>
+        <p>Atendimento rápido para qualquer problema.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
   <footer>
     © 2025 Diov Host - Todos os direitos reservados.
   </footer>
 
-  <script>
-    console.log("Diov Host carregado com sucesso!");
-  </script>
 </body>
 </html>
